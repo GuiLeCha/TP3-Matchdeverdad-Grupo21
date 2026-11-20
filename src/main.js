@@ -23,9 +23,54 @@ document.addEventListener('DOMContentLoaded', () => {
   initFlowTree('flow-2');
   initTacticalBoard();
   initDetailsAccessibility();
+  initMobileNav();
   initScrollSpy();
   initScrollToTop();
 });
+
+/* ==========================================================================
+   MENÚ HAMBURGUESA (tablet y celular)
+   ========================================================================== */
+function initMobileNav() {
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('site-nav');
+  if (!toggle || !nav) return;
+
+  function setOpen(open) {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
+  }
+
+  toggle.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Al elegir una sección, el menú se cierra
+  nav.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  // Cerrar con Escape y devolver el foco al botón
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+
+  // Cerrar al tocar fuera del header
+  document.addEventListener('click', (e) => {
+    if (nav.classList.contains('is-open') && !e.target.closest('.site-header')) {
+      setOpen(false);
+    }
+  });
+
+  // Si se agranda la ventana a escritorio, se resetea el estado
+  window.matchMedia('(min-width: 1025px)').addEventListener('change', (e) => {
+    if (e.matches) setOpen(false);
+  });
+}
 
 /* ==========================================================================
    LÓGICA PROPOSICIONAL (pura, sin DOM): fácil de verificar con la tabla de verdad
@@ -389,22 +434,28 @@ function initDetailsAccessibility() {
    SCROLL SPY DEL NAVBAR
    ========================================================================== */
 function initScrollSpy() {
-  const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
-  if (!sections.length || !navLinks.length) return;
+  // Solo se vigilan las secciones que tienen un enlace en el menú
+  const sections = Array.from(navLinks)
+    .map(link => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+  if (!sections.length) return;
 
   let ticking = false;
 
   function update() {
-    let current = '';
-    const scrollPos = window.scrollY + 140;
+    const header = document.querySelector('.site-header');
+    const offset = (header ? header.offsetHeight : 72) + 40;
+    const scrollPos = window.scrollY + offset;
+    let current = sections[0].id;
 
     sections.forEach(section => {
-      const top = section.offsetTop;
-      if (scrollPos >= top && scrollPos < top + section.offsetHeight) {
-        current = section.getAttribute('id');
-      }
+      if (scrollPos >= section.offsetTop) current = section.id;
     });
+
+    // Al llegar al final de la página se marca la última sección (FAQ es corta)
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    if (atBottom) current = sections[sections.length - 1].id;
 
     navLinks.forEach(link => {
       const active = link.getAttribute('href') === `#${current}`;

@@ -3,6 +3,24 @@
 
 Landing page técnica e interactiva desarrollada por el **Grupo 21** para presentar dos propuestas de automatización agéntica aplicadas a la startup **Matchdeverdad**, resolviendo el bloque asignado **Candidatos y urgencia** (Sorteo **S07-A**: Sentencias **FRASE 1 · R1** y **FRASE 2 · R2**).
 
+🔗 **Landing en vivo:** [tp3-matchdeverdad-grupo21.vercel.app](https://tp3-matchdeverdad-grupo21.vercel.app/) · **Repositorio:** [GuiLeCha/TP3-Matchdeverdad-Grupo21](https://github.com/GuiLeCha/TP3-Matchdeverdad-Grupo21)
+
+**Stack:** HTML5 · CSS3 · JavaScript (ES6, sin frameworks) · Vite 6 · Deploy en Vercel
+
+### Índice
+
+1. [Datos del Proyecto y Asignación Académica](#1-datos-del-proyecto-y-asignación-académica)
+2. [Integrantes del Grupo 21 y Aportes Concretos](#2-integrantes-del-grupo-21-y-aportes-concretos)
+3. [Sobre la Startup Matchdeverdad](#3-sobre-la-startup-matchdeverdad-y-la-articulación-ifts-16--ifts-29)
+4. [Formalización en Lógica Proposicional](#4-formalización-en-lógica-proposicional-y-auditoría-de-estados)
+5. [Las Dos Propuestas Agénticas](#5-desglose-detallado-de-las-dos-propuestas-agénticas-y-casos-límite)
+6. [Tecnologías y Arquitectura](#6-tecnologías-y-arquitectura-del-proyecto)
+7. [Estructura del Repositorio y Secciones de la Landing](#7-estructura-del-repositorio-y-secciones-de-la-landing)
+8. [Cómo Ejecutar el Proyecto Localmente](#8-instrucciones-para-ejecutar-el-proyecto-localmente)
+9. [Cómo Colaborar (Ramas y Pull Requests)](#9-cómo-colaborar-ramas-y-pull-requests)
+10. [Herramientas de IA y Evidencia de Construcción Agéntica](#10-herramientas-de-ia-y-evidencia-de-construcción-agéntica)
+11. [Enlaces Públicos del Proyecto](#11-enlaces-públicos-del-proyecto)
+
 ---
 
 ## 1. Datos del Proyecto y Asignación Académica
@@ -157,52 +175,114 @@ A continuación documentamos las $2^3 = 8$ combinaciones posibles de las proposi
 ## 6. Tecnologías y Arquitectura del Proyecto
 
 - **HTML5 Semántico y Accesible:** Uso estructurado de `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<details>`, `<summary>` y `<footer>`, enlace de salto al contenido principal (`.skip-link`), atributos ARIA dinámicos (`aria-expanded`, `aria-label`, `role="button"`) y navegación íntegra por teclado (`Tab`, `Enter`, `Espacio`).
-- **CSS3 Moderno (Custom Properties + Grid/Flexbox):** Diseño temático *"Cancha Sintética Nocturna"* con franjas de césped alternadas, líneas de cal, navbar fluida de una sola línea (`white-space: nowrap`), árboles de decisión en HTML/CSS inmunes a recortes de texto y tarjetas de alerta de alto contraste.
+- **CSS3 Moderno (Custom Properties + Grid/Flexbox):** Diseño temático *"Cancha Sintética Nocturna"* con franjas de césped alternadas, líneas de cal, navbar sticky con enlaces a todas las secciones, resaltado automático de la sección visible (*scroll spy*) y menú hamburguesa accesible en tablet y celular, árboles de decisión en HTML/CSS inmunes a recortes de texto y tarjetas de alerta de alto contraste.
 - **JavaScript Modular (ES6 — `src/main.js`):**
   - Función pura verificable `evaluateRules({ confirmed, minutesLeft, hasCandidates })` que evalúa en forma determinista las proposiciones $p, q, r$, los antecedentes $(p \land q)$ y $(p \land r \land \neg q)$, y los consecuentes $s, t, u$ (con $u = \text{false}$ invariante).
   - Controlador interactivo de los dos diagramas de flujo (*Ver Flujo Completo*, *Camino SÍ*, *Camino NO*) con estado accesible `aria-pressed`.
   - Motor reactivo de **La Pizarra del Capitán**: 10 camisetas clickeables para simular bajas o confirmaciones en tiempo real, selector de 4 ventanas temporales (`4h`, `3h exactas` como caso borde de desigualdad estricta $r = F$, `2h` y `30m`), interruptor del radar barrial ($\le 5\text{ km}$), visualización de la fórmula proposicional evaluada en vivo (`#agent-logic-formula`) y botón funcional para invitar e incorporar candidatos recomendados directamente a la cancha.
+  - Navegación: *scroll spy* que marca en el menú la sección visible (`aria-current`), menú hamburguesa con `aria-expanded` que se cierra al elegir una sección, con `Escape` o tocando afuera, y botón *Volver arriba*.
 - **Vite 6:** Empaquetador de desarrollo y construcción optimizada para producción (`dist/`).
 
 ---
 
-## 7. Instrucciones para Ejecutar el Proyecto Localmente
+## 7. Estructura del Repositorio y Secciones de la Landing
+
+### 7.1. Estructura de Carpetas
+
+```text
+TP3-Matchdeverdad-Grupo21/
+├── index.html          # Landing completa (todas las secciones)
+├── src/
+│   ├── style.css       # Estilos: tema "cancha nocturna", navbar, flujos, simulador, responsive
+│   └── main.js         # Diagramas interactivos, Pizarra del Capitán, navbar y scroll
+├── public/
+│   └── logos/          # Logo oficial de la startup (S07.webp) y variante Matchdeverdad.webp
+├── agentic/
+│   ├── CONTEXTO.md     # Consigna, sentencias asignadas y requisitos del TP3
+│   └── AUDITORIA.md    # Auditoría de la lógica y del trabajo generado por el agente
+├── vite.config.js      # Configuración de Vite (servidor en puerto 3000, salida en dist/)
+└── package.json        # Scripts: dev, build y preview
+```
+
+### 7.2. Secciones de la Landing (Menú de Navegación)
+
+Cada ítem del menú lleva a su sección con desplazamiento suave y el título queda visible debajo del header fijo.
+
+| Ítem del menú | Ancla | Contenido |
+| :--- | :--- | :--- |
+| Inicio | `#hero` | Presentación de Matchdeverdad y accesos rápidos a los diagramas y la pizarra. |
+| Startup | `#startup` | Startup asignada, logo oficial descargable y articulación IFTS 16 – IFTS 29. |
+| Reglas | `#sentencias` | Sentencias R1 y R2 desarmadas en premisas, condición y acción, más el diccionario proposicional. |
+| Flujo R1 | `#propuesta-1` | Propuesta *MatchFinder* con diagrama de flujo interactivo y desplegables. |
+| Flujo R2 | `#propuesta-2` | Propuesta *MatchGuard Urgency* con diagrama de flujo interactivo y desplegables. |
+| Pizarra | `#simulador` | Simulador interactivo *La Pizarra del Capitán*. |
+| Equipo | `#equipo` | Integrantes del Grupo 21 y sus aportes. |
+| FAQ | `#faq` | Preguntas técnicas frecuentes. |
+
+---
+
+## 8. Instrucciones para Ejecutar el Proyecto Localmente
 
 ### Requisitos Previos
 Contar con [Node.js](https://nodejs.org/) (versión 18 o superior) y `npm` instalados.
 
 ### Paso a Paso
-1. **Clonar el repositorio o posicionarse en la carpeta del proyecto:**
-   ```powershell
+1. **Clonar el repositorio y entrar a la carpeta del proyecto:**
+   ```bash
    git clone https://github.com/GuiLeCha/TP3-Matchdeverdad-Grupo21.git
-   cd "TP3-Matchdeverdad-Grupo21"
+   cd TP3-Matchdeverdad-Grupo21
    ```
 
 2. **Instalar las dependencias:**
-   ```powershell
+   ```bash
    npm install
    ```
 
 3. **Levantar el servidor de desarrollo local:**
-   ```powershell
+   ```bash
    npm run dev
    ```
-   Abrir en el navegador la URL indicada en consola (por defecto `http://localhost:5173` o `http://localhost:3000`).
+   Abrir en el navegador la URL que muestra la consola: `http://localhost:3000` (puerto definido en `vite.config.js`).
 
 4. **Generar la compilación para producción:**
-   ```powershell
+   ```bash
    npm run build
    ```
    Verifica que el proyecto compile con `0 errores` generando los archivos estáticos optimizados en `dist/`.
 
 5. **Previsualizar el build de producción localmente:**
-   ```powershell
+   ```bash
    npm run preview
    ```
 
 ---
 
-## 8. Herramientas de IA y Evidencia de Construcción Agéntica
+## 9. Cómo Colaborar (Ramas y Pull Requests)
+
+Para no romper lo que ya funciona, ningún cambio se sube directo a `main`. El flujo de trabajo del grupo es:
+
+1. **Actualizar `main` antes de empezar:**
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+2. **Crear una rama con un nombre descriptivo** (por ejemplo `feature/...` para mejoras o `fix/...` para correcciones):
+   ```bash
+   git checkout -b feature/nombre-del-cambio
+   ```
+3. **Hacer los cambios y verificar que compile** con `npm run build` y revisar la página con `npm run dev`.
+4. **Commitear y subir la rama:**
+   ```bash
+   git add .
+   git commit -m "feat: descripción corta del cambio"
+   git push -u origin feature/nombre-del-cambio
+   ```
+5. **Abrir un Pull Request en GitHub** contra `main`, explicando qué se cambió y cómo probarlo.
+6. **Revisión del coordinador:** Guillermo Chacon ([`@GuiLeCha`](https://github.com/GuiLeCha)) revisa el PR y, si está todo bien, lo integra a `main`. Vercel vuelve a desplegar la landing automáticamente.
+
+---
+
+## 10. Herramientas de IA y Evidencia de Construcción Agéntica
 
 Siguiendo la modalidad pedagógica del TP3 (*"Construcción 100% Agéntica: ustedes dirigen, el agente construye"*), documentamos las herramientas empleadas y el proceso real de dirección e iteración del Grupo 21:
 
@@ -230,7 +310,7 @@ Siguiendo la modalidad pedagógica del TP3 (*"Construcción 100% Agéntica: uste
 
 ---
 
-## 9. Enlaces Públicos del Proyecto
+## 11. Enlaces Públicos del Proyecto
 
 - **Repositorio Público en GitHub:** [https://github.com/GuiLeCha/TP3-Matchdeverdad-Grupo21](https://github.com/GuiLeCha/TP3-Matchdeverdad-Grupo21)
 - **Landing Page Desplegada en Vercel:** [https://tp3-matchdeverdad-grupo21.vercel.app/](https://tp3-matchdeverdad-grupo21.vercel.app/)
